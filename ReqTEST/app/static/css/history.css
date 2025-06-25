@@ -1,0 +1,152 @@
+main{
+    display: flex;
+    height: auto;
+}
+
+.content-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    gap: 20px;
+}
+
+.picturePreview{
+    width: 100%;
+}
+
+.list-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.items{
+    width: 65%;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.item{
+    cursor: pointer;
+    user-select: none;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 5px;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    border: 0.5px solid gray;
+    background-color: white;
+    position: relative;
+}
+
+.video-container {
+    width: 100%;
+    aspect-ratio: 4 / 2.25;
+    overflow: hidden; /* はみ出た部分を隠す */
+    position: relative; /* 子要素の配置の基準点となる */
+}
+
+.video-container video {
+    width: 100%; /* コンテナの幅いっぱいに広げる */
+    height: 100%; /* コンテナの高さいっぱいに広げる */
+    position: absolute; /* コンテナ内で絶対配置 */
+    top: 0;
+    left: 0;
+}
+
+.movie-title{
+    display: flex;
+    width: 100%;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.c_icon{
+    width: 25px;
+    height: 25px;
+    background-size: cover;
+    border-radius: 15px;
+    background-color: aqua;
+    margin-right: 5px;
+}
+
+.movieinfo{
+    display: flex;
+    align-items: center;
+    margin: 10px;
+}
+
+.creator_name{
+    color: gray;
+    font-size: 14px;
+}
+
+.item-link{
+    width: 30%;
+    height: 90%;
+}
+
+.item_container{
+    padding-left: 20px;
+    width: 80%;
+    height: 225px;
+    display: flex;
+    background-color: white;
+    border-radius: 5px;
+    border: 0.5px solid black;
+    justify-content: center;
+    align-items: center;
+}
+
+.movie_preview_container{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.right-container{
+    height: 100%;
+    gap: 15px;
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 30px;
+}
+
+.btn-method{
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    border: 1px solid gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: rgba(244, 164, 96, 0.8);
+}
+
+.description{
+    flex-grow: 1;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.description span{
+    font-size: 14px;
+}

@@ -1,0 +1,94 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Content</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="upload_form">
+            <div class="preview_container" style="display: none; margin-bottom: 20px;">
+                <video id="videoPreview" muted controls style="max-width: 100%; max-height: 300px;"></video>
+            </div>
+            <div class="form_container">
+                <form action="movie" method="post" id="sendform" enctype="multipart/form-data">
+
+                    <div class="movie_details" id="detailinput">
+                        <div class="opt_item">
+                            <span class="required">必須</span><span class="opt_name">サムネイル</span><input required class="opt_input" type="file" id="thum" name="thum" accept="image/png, image/jpeg"><br>
+                        </div>
+                        <div class="opt_item sampleURLs">
+                            <div class="sampleURL">
+                                <span class="optional">任意</span><span class="opt_name">Sample URL</span><input class="opt_input" type="text" id="sample" name="sample">
+                            </div>
+                            <div class="sampleURL">
+                                <span class="optional">任意</span><span class="opt_name">Sample URL</span><input class="opt_input" type="text" id="sample" name="sample">
+                            </div>
+                            <div class="sampleURL">
+                                <span class="optional">任意</span><span class="opt_name">Sample URL</span><input class="opt_input" type="text" id="sample" name="sample">
+                            </div>
+                        </div>
+                        
+                        <div class="opt_item">
+                            <span class="required">必須</span><span class="opt_name">タイトル</span><input required class="opt_input" type="text" id="title" name="title"><br>
+                        </div>
+                        <div class="opt_item">
+                            <span class="required">必須</span>
+                            <span class="opt_name">カテゴリー</span>
+                            <select class="opt_input" required id="tags" name="tags">
+                                <option value="">選択してください</option>
+                                <option value="全ての動画">全ての動画</option>
+                                <option value="ショート動画">ショート動画</option>
+                                <option value="MV動画">MV動画</option>
+                                <option value="結婚式">結婚式</option>
+                                <option value="イベント">イベント</option>
+                                <option value="その他">その他</option>
+                                <!-- 必要に応じて他のカテゴリーを追加 -->
+                            </select>
+                        </div>
+                        <div class="opt_item">
+                            <span class="optional">任意</span><span class="opt_name">説明文</span><textarea class="opt_input" type="text" id="description" name="description"></textarea><br>
+                        </div>
+                        <div class="opt_item">    
+                            <span class="required">必須</span><span class="opt_name">税込</span><input required class="opt_input" type="text" id="price" name="price">
+                        </div>
+                        <div class="opt_item">    
+                            <span class="optional">任意</span><span class="opt_name">即納コンテンツ</span><input type="checkbox" name="content" id="contents_checkbox" value="1"><span>(やり取り無しで購入可)</span>
+                        </div>
+                        <div class="opt_item" id="fullmovie_upload" style="display: none;">
+                            <span class="required">必須</span><span class="opt_name">納品データ</span><input class="opt_input" type="file" id="fullmovie" name="full" accept=".mp4,.m4v,.mov,.mpg"><br>
+                        </div>
+                    </div>
+                    <input type="submit" value="送信">
+                </form>
+            </div>
+        </div>
+
+    </main>
+</body>
+<script>
+    const checkbox = document.querySelector('input[type="checkbox"]');
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            contents_on_check();
+        }else{
+            contents_off_check();
+        }
+    });
+
+    function contents_on_check(){
+        document.getElementById("fullmovie_upload").style.display = "flex"
+    }
+
+    function contents_off_check(){
+        document.getElementById("fullmovie_upload").style.display = "none"
+    }
+    
+</script>
+</html>

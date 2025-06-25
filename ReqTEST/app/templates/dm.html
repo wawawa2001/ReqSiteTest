@@ -1,0 +1,144 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dm.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <title>Direct Messages</title>
+</head>
+<body>
+
+    {% include 'header.html' %}
+
+    <main>
+
+        <div class="lists">
+            {% for person in dmlist %}
+                <div class="list" userid="{{person.someone_id}}" onclick="opendm(this)">
+                    <div class="dmicon" style="background-image: url('{{ url_for('static', filename='image/usericons/' + person.icon_filename) }}');"></div>
+                    <div class="dminfo">
+                        <div class="name"><span>{{person.someone_username}}</span></div>
+                        <div class="new_msg">{{person.message}}</div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div id="dm_window">
+                <div class="dm_list_home" onclick="back_to_dmhome()"></div>
+            </div>
+        </div>
+
+        
+    </main>
+
+</body>
+<script>
+    pair = [undefined, undefined]
+
+    function opendm(elem){
+        document.getElementById("dm_window").style.display = "block";
+        userid = elem.getAttribute("userid")
+        req_dm(userid)
+    }
+
+    function back_to_dmhome(){
+        document.getElementById("dm_window").style.display = "none";
+    }
+    
+    function get_dm(userid){
+        fetch("/get_dm", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "userid": userid
+            })
+
+        })
+        .then(response => response.json())
+        .then(data =>{
+            console.log(data.data)
+        })
+    }
+
+    function switch_window(){
+        tmp = document.getElementById("d_messages").style.display
+        document.getElementById("d_messages").style.display = document.getElementById("message_container").style.display
+        document.getElementById("message_container").style.display = tmp
+        if (tmp == "none"){
+            document.getElementById("send-form").style.display = "none"
+        }else{
+            document.getElementById("send-form").style.display = "flex"
+        }
+    }
+
+    function set_messages(data){
+        document.getElementById("message_detail").innerHTML = ""
+        var username = data.current_username
+        msgdata = data.msg
+        base = document.getElementById("message_detail")
+        for(var i=0; i<msgdata.length; i++){
+            var parent = document.createElement("div")
+            parent.className = "ajust_container"
+            var msg_con = document.createElement("div")
+            msg_con.className = "msg_container"
+            var date_con = document.createElement("div")
+            date_con.className = "date_container"
+            var span = document.createElement("span")
+            span.className = "sentat"
+            
+            date_con.appendChild(span)
+
+            
+            if (username == msgdata[i][0]){
+                parent.style.alignItems = "end"
+                msg_con.style.backgroundColor = "#1DA1F2"
+                msg_con.style.float = "right"
+                date_con.style.float = "right"
+            }else{
+                parent.style.alignItems = "start"
+                msg_con.style.backgroundColor = "#657786"
+                msg_con.style.float = "left"
+                date_con.style.float = "left"
+            }
+            msg_con.textContent = msgdata[i][2]
+            span.textContent = msgdata[i][3]
+
+            parent.appendChild(msg_con)
+            parent.appendChild(date_con)
+            base.appendChild(parent)
+        }
+
+        
+    }
+
+    function send_msg_from_input_tag(event){
+        if (event.key === 'Enter') {
+            send_msg()
+            document.getElementById("send-msg-text").value = ""
+        }
+    }
+
+    function send_msg(){
+        text = document.getElementById("send-msg-text").value
+        fetch("/post_dm", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "pair": pair,
+                "text": text
+            })
+
+        })
+        .then(response => response.json())
+        .then(data =>{
+            console.log(data)
+            req_dm(pair[0], pair[1], false)
+        })
+    }
+</script>
+
+</html>

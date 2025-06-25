@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン/新規登録フォーム</title>
+    <link rel="stylesheet" href="{{ url_for ('static', filename='css/login-register.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <div class="tab-container">
+            <div class="tab active" onclick="switchTab('login')">ログイン</div>
+            <div class="tab" onclick="switchTab('register')">新規登録</div>
+        </div>
+        <div class="login_container">
+        <!--
+            
+            <div id="login" class="form-content active">
+                <form action="./login" method="post">
+                    <input type="text" name="username" placeholder="ユーザー名" required>
+                    <input type="password" name="password" placeholder="パスワード" required>
+                    <span class="msg" style="color: red;">{{msg}}</span>
+                </form>
+            </div>
+            <div id="register" class="form-content">
+                <div class="register_form">
+                    <input type="text" class="username" placeholder="ユーザー名" required>
+                    <input type="email" class="email" placeholder="メールアドレス" required>
+                    <input type="password" class="password" placeholder="パスワード" required>
+                    <input type="password" class="confirm_password" placeholder="パスワード（確認）" required><br>
+                    <span class="msg" style="color: red;">{{msg}}</span><br>
+                    <button type="button" onclick="register_send_form()">登録</button>
+                </div>
+            </div>
+
+            <div class="split_bar">
+                <span class="split_bar_span"></span>
+                <span>その他のログイン</span>
+                <span class="split_bar_span"></span>
+            </div>
+
+        -->
+            
+            <div class="oauth_container">
+                <div class="oauth_btn google_auth">
+                    <a href="login/google">
+                        <div class="google_icon"></div>
+                        <span>Googleでログインする</span>
+                    </a>
+                </div>
+                <div class="oauth_btn yahoo_auth">
+                    <a href="login/yahoo">
+                        <div class="yahoo_icon"></div>
+                        <span>Yahoo!でログインする</span>
+                    </a>
+                </div>
+            </div>
+
+            <!--
+            <button type="button">ログイン</button>
+            -->
+        </div>
+    </div>
+
+    <script>
+        function is_empty(text){
+            if(!text){
+                return true
+            }
+            return text
+        }
+
+        function register_send_form(){
+            const username = is_empty(document.querySelector(".register_form .username").value)
+            const email = is_empty(document.querySelector(".register_form .email").value)
+            const password = is_empty(document.querySelector(".register_form .password").value)
+            const confirm_password = is_empty(document.querySelector(".register_form .confirm_password").value)
+
+            const hasFalse = [username, email, password, confirm_password].includes(false)
+
+            if (hasFalse){
+                document.querySelector(".register_form .msg").innerText = "空白の欄があります。"
+                return
+            }
+
+            if (password != confirm_password){
+                document.querySelector(".register_form .msg").innerText = "パスワードが一致しません。"
+                return
+            }
+
+            fetch("register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "username": username,
+                    "email": email,
+                    "password": password,
+                    "confirm_password": confirm_password
+                })
+            })
+            .then(response => response.json())
+            .then(response =>{
+                alert(response.msg)
+                location.href = "/login"
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+        // URLの最後の部分を取得
+        const path = window.location.pathname;
+        const lastSegment = path.split('/').pop();
+
+        // タブとフォームの要素を取得
+        const loginTab = document.querySelector('.tab:nth-child(1)');
+        const registerTab = document.querySelector('.tab:nth-child(2)');
+        const loginForm = document.getElementById('login');
+        const registerForm = document.getElementById('register');
+
+        // URLの最後の部分に基づいてタブを切り替える
+        if (lastSegment === 'register') {
+            loginTab.classList.remove('active');
+            registerTab.classList.add('active');
+            loginForm.classList.remove('active');
+            registerForm.classList.add('active');
+        } else {
+            // デフォルトはログインタブ
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            loginForm.classList.add('active');
+            registerForm.classList.remove('active');
+        }
+
+        // 既存のタブ切り替え機能
+        function switchTab(tabName) {
+            const tabs = document.getElementsByClassName('tab');
+            const forms = document.getElementsByClassName('form-content');
+            
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+                forms[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // タブのクリックイベントリスナーを追加
+        loginTab.addEventListener('click', function() { switchTab('login'); });
+        registerTab.addEventListener('click', function() { switchTab('register'); });
+    });
+    </script>
+</body>
+</html>

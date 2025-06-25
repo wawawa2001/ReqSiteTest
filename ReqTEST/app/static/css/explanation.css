@@ -1,0 +1,28 @@
+.page_title{
+    width: 100%;
+}
+
+.page_title_span{
+    font-size: 28px;
+}
+
+.word_explanations{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;;
+}
+
+.word_explanation{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.explanation_title_span{
+    font-size: 20px;
+}
+
+.explanation_text_span{
+    color: gray;
+}

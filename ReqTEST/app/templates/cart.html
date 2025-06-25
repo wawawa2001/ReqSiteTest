@@ -1,0 +1,134 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+    <main>
+        <div class="cart-container">
+            <div class="items">
+                <div class="title">
+                    <span>カート内のアイテム</span>
+                </div>
+                {% for movie in movies %}
+                    <div class="item_container">
+                        <div class="movie_preview_container">
+                            <a href="/movies/{{movie.id}}" class="item-link">
+                                <div class="item">
+
+                                    {% if movie.filename and movie.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))%}
+                                        <div class="picturePreview" style="background-image: url('{{ url_for('static', filename='movie/preview/' + movie.filename) }}');">
+
+                                        </div>
+                                    {% else %}
+                                        <div class="video-container">
+                                            <video muted loop playsinline onfocus="videofocus(this)">
+                                                <source src="{{ url_for('static', filename='movie/preview/' + movie.filename) }}" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    {% endif %}
+
+
+                                    <span class="movie-title">{{movie.title}}</span>
+                                    <div class="movieinfo">
+                                        <div class="c_icon" style="background-image: url('{{ url_for('static', filename='image/usericons/' + movie.icon_filename) }}');"></div>
+                                        <span class="creator_name">{{movie.username}}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="movie_details_container">
+                            <div class="movie_details">
+                                <span class="movie_details_description">{{movie.description}}</span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="del_item">
+                                <span class="delitem_span" onclick="delitem(this)" itemid="{{movie.id}}">アイテムを削除する</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="checkout-container">
+                <div class="payment-method">
+                    <span>支払い方法</span>
+                    <select name="payment-method" id="payment-method-selector">
+                        <option>-- 支払い方法を選択 -- </option>
+                        <option value="paypay">PayPay</option>
+                        <option value="credit">クレジットカード・コンビニ・銀行振込</option>
+                    </select>
+                </div>
+                <div class="calc_order">
+                    <div class="sub_detail order"><span style="font-weight: bold;">注文内容</span></div><br>
+                    <div class="sub_detail subtotal"><span>商品の小計</span><span>{{ '{:,}'.format(total)}}円</span></div><br>
+                    <div class="sub_detail tax"><span>消費税</span><span>{{ '{:,}'.format((total * 0.1) | round | int)}}円</span></div><br>
+                    <div class="sub_detail total_price"><span>合計</span><span style="font-size: 24px;">{{ '{:,}'.format((total * 1.1) | round | int)}} 円</span></div>
+                </div>
+                <button id="paybtn" onclick="pay()">決済する</button>
+            </div>
+        </div>
+    </main>
+</body>
+
+<script>
+    function delitem(elem){
+        data = {"itemid": elem.getAttribute("itemid")}
+        
+
+        fetch("/delitem", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.reload()
+        })
+    }
+
+    function pay(){
+
+        selectValue = document.getElementById("payment-method-selector").value.toLowerCase()
+        selectIndex = parseInt(document.getElementById("payment-method-selector").selectedIndex)
+
+        console.log(selectIndex)
+
+        if (selectIndex != 0){
+            fetch("/pay", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "select": selectValue
+                })
+            })
+            .then(response => response.json())
+            .then(response =>{
+                if (response.msg != ""){
+                    alert(response.msg)
+                }
+                window.location.href = response.url
+            })
+        }else{
+            alert("支払い方法を選択してください。")
+        }
+
+        //fetch()
+
+        //window.location.href='/pay'
+    }
+
+</script>
+</html>

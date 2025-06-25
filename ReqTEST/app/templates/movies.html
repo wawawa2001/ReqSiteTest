@@ -1,0 +1,114 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base-item.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}">
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="content_header">
+            <div class="current_title">
+                <div id="movieicon"></div>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <span style="font-size: 25px;">Movie ~ 動画編集 ~</span>
+                </div>
+            </div>
+            
+            <span>Music Video等の動画素材を購入できます。</span>
+        </div>
+
+        <div class="content_container">
+
+            <div class="contents">
+
+                <div class="sub-categories">
+                    <div class="sub-category" onclick="location.href='movies?category=1'">
+                        <div class="category_thum" id="movies"></div>
+                        <div class="category_title"><span>動画編集</span></div>
+                    </div>
+                    <div class="sub-category" onclick="location.href='movies?category=2'">
+                        <div class="category_thum" id="short"></div>
+                        <div class="category_title"><span>ショート動画</span></div>
+                    </div>
+                    <div class="sub-category" onclick="location.href='movies?category=3'">
+                        <div class="category_thum" id="mv"></div>
+                        <div class="category_title"><span>MV動画</span></div>
+                    </div>
+                    <div class="sub-category" onclick="location.href='movies?category=4'">
+                        <div class="category_thum" id="marry"></div>
+                        <div class="category_title"><span>結婚式</span></div>
+                    </div>
+                    <div class="sub-category" onclick="location.href='movies?category=5'">
+                        <div class="category_thum" id="event"></div>
+                        <div class="category_title"><span>イベント</span></div>
+                    </div>
+                    <div class="sub-category" onclick="location.href='movies?category=6'">
+                        <div class="category_thum" id="other"></div>
+                        <div class="category_title"><span>その他動画</span></div>
+                    </div>
+                </div>
+
+                <div class="items">
+                    {% for movie in movies %}
+                        <a href="/movies/{{movie.id}}" class="item-link">
+                            <div class="item">
+
+                                <div class="picturePreview" style="background-image: url('{{ url_for('static', filename='movie/preview/' + movie.thum_filename) }}');"></div>
+
+                                <div class="movie_desc">
+                                    <div class="movie-title-container"><span class="movie-title">{{movie.title}}</span></div>
+                                    <div class="description">{{movie.description}}</div>
+                                </div>
+                                <div class="movieinfo">
+                                    {% if (movie.req_price | int) != 0 %}
+                                    <span class="req-price">
+                                        <div class="req_price-design-bar design-bar"></div>
+                                        {{'{:,}'.format(movie.req_price | int)}}円
+                                    </span>
+                                    {% else %}
+                                    
+                                    <span class="price">
+                                        <div class="price-design-bar design-bar"></div>
+                                        {{'{:,}'.format(movie.price | int)}}円
+                                    </span>
+                                    
+                                    {% endif %}
+                                
+                                    <div class="favorite_btn">
+                                        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <polygon points="50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35" fill="gold" stroke="black" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                
+                                    <div class="c_icon" style="background-image: url('{{ url_for('static', filename='image/usericons/' + movie.usericon) }}');"></div>
+                                    
+                                    <span class="creator_name">{{movie.username}}</span>
+                                </div>
+
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+
+    </footer>
+</body>
+
+<script>
+    function videofocus(elem){
+        elem.setAttribute("autoplay")
+    }
+</script>
+</html>

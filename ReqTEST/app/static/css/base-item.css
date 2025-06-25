@@ -1,0 +1,144 @@
+.item-link{
+    text-decoration: none;
+    width: 23%;
+    color: black;
+}
+
+.items{
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.item{
+    cursor: pointer;
+    user-select: none;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ced4d6;
+    background-color: white;
+    position: relative;
+}
+
+.videoPreview, .thumPreview, .picturePreview {
+    width: 100%;
+    aspect-ratio: 4 / 2.25;
+    overflow: hidden; /* はみ出た部分を隠す */
+    position: relative; /* 子要素の配置の基準点となる */
+}
+
+.videoPreview video, .thumPreview video {
+    width: 100%; /* コンテナの幅いっぱいに広げる */
+    height: 100%; /* コンテナの高さいっぱいに広げる */
+    position: absolute; /* コンテナ内で絶対配置 */
+    top: 0;
+    left: 0;
+}
+
+.picturePreview{
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.creator_name{
+    color: gray;
+    font-size: 14px;
+}
+
+.price, .req-price{
+    background-color: orange;
+    z-index: 20;
+    border-radius: 1px;
+    position: absolute;
+    width: 100px;
+    height: 30px;
+    top: 10;
+    left: 0;
+    border: 0;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.req-price{
+    background-color: orangered;
+}
+
+.design-bar{
+    position: absolute;
+    height: 100%;
+    width: 5px;
+    background-color: white;
+    top: 0;
+    right: 0;
+}
+
+.movie_desc{
+    width: 100%;
+    padding: 5px;
+}
+
+
+.movie-title-container{
+    width: 100%;
+    max-height: 50px;
+}
+
+.movie-title{
+    width: 100%;
+    text-wrap: wrap;
+    overflow-y: hidden;
+}
+
+.c_icon{
+    width: 25px;
+    height: 25px;
+    background-size: cover;
+    border-radius: 15px;
+    margin-right: 5px;
+    border: 0.1px solid light;
+}
+
+.movieinfo{
+    display: flex;
+    align-items: center;
+}
+
+
+.description{
+    font-size: 12px;
+    color: gray;
+    text-wrap: wrap;
+    height: 36px;
+    overflow-y: hidden;
+}
+
+.favorite_btn{
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    z-index: 20;
+    background-color: gray;   
+}
+
+@media screen and (max-width: 767px) {
+    .item-link {
+        width: 47%;
+    }
+}

@@ -1,0 +1,299 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_contents.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/item.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <title>{{movie.title}}</title>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="item-container">
+            <div class="left-item">
+                <div class="item-header">
+                    
+                    <div class="itemtitle">
+                        <div class="title">
+                            <span>【{{movie.title}}】</span>
+                        </div>
+                    </div>
+
+                    <div class="serviceDetails">
+                        <div class="serviceDetail rating">
+                            <div class="labelbox">
+                                <span>評価</span>
+                            </div>
+                            <div class="stars">
+                                {% set yellow_integer_part = review_data.review_ave | int %}
+                                {% set yellow_decimal_part = ((review_data.review_ave - yellow_integer_part) * 100) | int %}
+                                {% set gray_decimal_part = 100 - yellow_decimal_part %}
+                                {% set gray_integer_part = (5 - yellow_integer_part) - ((yellow_decimal_part / 100 + 0.5) | int)%}
+                                {% for _ in range(yellow_integer_part) %}
+                                    <div class="star">
+                                        <svg width="auto" height="auto" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <polygon points="50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35" fill="gold" stroke="black" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                {% endfor %}
+                                {% if yellow_decimal_part != 0 %}
+                                    <div class="star">
+                                        <svg width="auto" height="auto" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <defs>
+                                                <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                    <stop offset="{{yellow_decimal_part}}%" style="stop-color:gold;stop-opacity:1" />
+                                                    <stop offset="{{gray_decimal_part}}%" style="stop-color:gray;stop-opacity:1" />
+                                                </linearGradient>
+                                            </defs>
+                                            <polygon points="50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35" fill="url(#starGradient)" stroke="black" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                                {% for _ in range(gray_integer_part) %}
+                                    <div class="star">
+                                        <svg width="auto" height="auto" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <polygon points="50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35" fill="gray" stroke="black" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="rating-text">
+                                <span class="rating-five">{{review_data.review_ave}}</span>
+                            </div>
+                        </div>
+                        <div class="serviceDetail sales">
+                            <div class="labelbox">
+                                <span>販売実績</span>
+                            </div>
+
+                            <div class="sales-text">
+                                <span class="rating-five">{{review_data.review_count}}件</span>
+                            </div>
+                        </div>
+                        <div class="serviceDetail favorites">
+                            <div class="labelbox">
+                                <span>お気に入り数</span>
+                            </div>
+                            <div class="favorite-text">
+                                <div class="heart-svg" onclick="favorite('{{movie.id}}')">
+                                    {% if favorite_flg %}
+                                    <svg id="heart-svg-content" xmlns="http://www.w3.org/2000/svg" width="auto" height="auto" viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="salmon" stroke="#808080" stroke-width="1"/>
+                                    </svg>
+                                    {% else %}
+                                    <svg id="heart-svg-content" xmlns="http://www.w3.org/2000/svg" width="auto" height="auto" viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#E0E0E0" stroke="#808080" stroke-width="1"/>
+                                    </svg>
+                                    {% endif %}
+                                </div>
+                                <span id="favorite-text-span" class="favorite-text-span">
+                                    {{movie.favorite}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="Contents-menu-scroller">
+                    <div class="Contents-menu" style="border-bottom: 2px solid salmon;" onclick="location.href='#item-description-container'">
+                        <div class="Contents-menu-text">
+                            <span>サービス内容</span>
+                        </div>
+                    </div>
+                    <div class="Contents-menu">
+                        <div class="Contents-menu-text">
+                            <span>購入時のお願い</span>
+                        </div>
+                    </div>
+                    <div class="Contents-menu">
+                        <div class="Contents-menu-text">
+                            <span>よくある質問</span>
+                        </div>
+                    </div>
+                    <div class="Contents-menu">
+                        <div class="Contents-menu-text">
+                            <span>評価・感想</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview_container">
+                    {% if preview_filename and preview_filename.lower().endswith(('.png', '.jpg', '.jpeg', 'webp'))%}
+                    <div id="thumPreview" class="thumPreview" style="background-image: url('{{ url_for('static', filename='movie/preview/' + preview_filename) }}');">
+                        <iframe id="ytframe" style="display: none;" width="100%" height="100%" src="https://www.youtube.com/embed/" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    {% else %}
+                    <video id="videoPreview" muted controls style="max-width: 100%; max-height: 300px;">
+                        <source src="{{ url_for('static', filename='movie/preview/' + preview_filename) }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    {% endif %}
+                    <div class="preview_subLists">
+                        {% for sample_link in sample_links %}
+                            {% if sample_link %}
+                            <div id="preview_subList" class="preview_subList">
+                                <div class="other_preview_img" onmouseover="switch_thum(this)" style="background-image: url('https://img.youtube.com/vi/{{sample_link}}/default.jpg');">
+
+                                </div>
+                            </div>
+                            {% else %}
+                            <div id="preview_subList" class="preview_subList">
+                                <div class="other_preview_img nosample">
+                                    <span>No Sample</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>    
+                </div>
+
+                <div id="item-description-container" class="item-description-container">
+                    <div class="description">
+                        <span style="font-size: 16px; font-weight: bold;">サービス内容</span><br>
+                        <div class="description-text">
+                            <span class="description-text-span">{{movie.description}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-item">
+                <div class="Purchase-container">
+                    {% if movie.price %}
+                    <div class="price">
+                        <span>{{'{:,}'.format(movie.price)}} 円</span>
+                        <span style="font-size: 10px;">(税込：{{'{:,}'.format((movie.price * 1.1) | int )}} 円)
+                    </div>
+                    <div class="attention_msg">
+                        <span class="attention_msg_span">※こちらの商品は<br><a href="/explanation#downloads_contents">ダウンロードコンテンツ</a>です。</span>
+                    </div>
+                    <div class="actionbtns">
+                        <button class="actionbtn addcart" onclick="addcart()">カートに商品を入れる</button>
+                    </div>
+                    {% else %}
+                    <div class="price">
+                        <span>{{'{:,}'.format(movie.req_price)}} 円</span>
+                        <span style="font-size: 10px;">(税込：{{'{:,}'.format((movie.req_price * 1.1) | int )}} 円)
+                    </div>
+                    <div class="attention_msg">
+                        <span class="attention_msg_span">※こちらの商品は<br><a href="/explanation#request_contents">依頼用コンテンツ</a>です。</span>
+                    </div>
+                    <div class="actionbtns">
+                        <button class="actionbtn request" onclick="request()">オリジナルMVを依頼する</button>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="creatorInfo">
+                    <div class="creatorInfo-title">
+                        <span>出品者プロフィール</span>
+                    </div>
+                    <div class="creator-icon" style="background-image: url('{{ url_for('static', filename='image/usericons/' + usericon) }}');">
+
+                    </div>
+
+                    <div class="creator-name">
+                        <a href="/users/{{movie.userid}}"><span>{{movie.username}}</span></a>
+                        <a href="/users/{{movie.userid}}">プロフィール詳細へ ></a>
+                    </div>
+                </div>
+            </div>
+
+                
+        </div>
+    </main>
+</body>
+<script>
+    const sampleElem = document.getElementById("preview_subList");
+
+    function check_ytlnk(url){
+        ytlnkMatch = url.match(/^url\(["']?(https:\/\/img\.youtube\.com\/vi\/([a-zA-Z0-9_-]+)\/default\.jpg)["']?\)$/);
+        ytlnkMatch = ytlnkMatch ? ytlnkMatch[1] : null;
+        if (ytlnkMatch){
+            vID = url.split('url("https://img.youtube.com/vi/')[1].replace('/default.jpg")', "")
+            return vID
+        }
+
+        return false
+    }
+
+    function switch_thum(elem){
+        main_pre = document.getElementById("thumPreview")
+        tmp_url = main_pre.style.backgroundImage
+        main_pre.style.backgroundImage = elem.style.backgroundImage
+        vID = check_ytlnk(elem.style.backgroundImage)
+        ytframe = document.getElementById("ytframe")
+
+        baseurl = "https://www.youtube.com/embed/"
+        if (vID){
+            ytframe.style.display = "block"
+            ytframe.src = baseurl + vID
+        }else{
+            ytframe.style.display = "none"
+            ytframe.src = baseurl
+        }
+        
+        elem.style.backgroundImage = tmp_url
+    }
+
+    function addcart(){
+        const itemid = location.href.split("/").slice(-1)
+
+        fetch("/add_cart", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(itemid)
+            })
+            .then(response => response.json())
+            .then(data => {
+                get_cart_count()
+                alert(data.msg)
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function request(){
+        const itemid = location.href.split("/").slice(-1)
+
+        fetch("/add_req", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(itemid)
+            })
+            .then(response => response.json())
+            .then(data => {
+                get_cart_count()
+                alert(data.msg)
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function favorite(movie_id){
+        fetch("/user_favorite_judge", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(movie_id)
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("favorite-text-span").innerText = data["favorite"]
+            if(data.favotite_flg){
+                document.querySelector("#heart-svg-content path").style.fill = "salmon"
+            }else{
+                document.querySelector("#heart-svg-content path").style.fill = "#E0E0E0"
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+</html>

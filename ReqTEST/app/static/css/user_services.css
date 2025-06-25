@@ -1,0 +1,64 @@
+.item-link{
+    display: block;
+    width: 100%;
+    height: 200px;
+    text-decoration: none;
+    color: black;
+}
+
+.items{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.item{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border: 1px solid lightgray;
+}
+
+.iteminfo{
+    flex-grow: 1;
+    padding: 15px;
+}
+
+.item_thum{
+    width: 267px;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.movie-title{
+    font-size: 18px;
+    font-weight: bold !important; 
+}
+
+.item-description{
+    height: 110px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.item-review{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 15px;
+}
+
+.rating_star{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.price{
+    font-size: 18px;
+    font-weight: bold;
+}

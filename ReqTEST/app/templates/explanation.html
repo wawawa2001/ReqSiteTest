@@ -1,0 +1,37 @@
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_contents.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/explanation.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <title>本サービスにおける用語に関して</title>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        
+        <div class="contents">
+            <div class="page_title">
+                <span class="page_title_span">本サービスにおける用語に関して</span>
+            </div>
+            <div class="word_explanations">
+                {% for explanation in explanations %}
+                    <div id="{{explanation.title}}" class="word_explanation">
+                        <div class="explanation_title">
+                            <span class="explanation_title_span">{{explanation.explanation}}</span>
+                        </div>
+                        <div class="explanation_text">
+                            <span class="explanation_text_span">{{explanation.title_description}}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>

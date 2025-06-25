@@ -1,0 +1,100 @@
+@font-face {
+    font-family: "Karakaze";
+    src: url(../font/karakaze-R.otf);
+}
+
+main{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: calc(100% - 85px);
+	background-color: #E5E5E5;
+}
+
+.select_container{
+	width: 50%;
+	height: 60%;
+	background-color: white;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+}
+
+.select-msg{
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.selectbtns{
+	cursor: pointer;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	width: 95%;
+	height: 80%;
+}
+
+.selectbtn{
+	width: 45%;
+	height: 60%;
+	background-color: azure;
+	border: 1px solid gray;
+	font-size: 18px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.selectbtn span{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+    z-index: 1;
+    width: 70%;
+    height: 40px;
+    text-align: center;
+    backdrop-filter: blur(2px); /* 背景をぼかす */
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 0.5px solid white;
+    font-family: "Karakaze";
+}
+
+.selectbtn:hover{
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.selectbtn{
+    background-color: rgba(255, 255, 255, 0.3); /* 白色の半透明背景 */
+    background-blend-mode: lighten;
+    background-size: cover;
+	background-position: center;
+    cursor: pointer;
+}
+
+.illustbtn{
+    background-image: url("../image/illust_btn.jpg");
+}
+
+.videobtn{
+    background-image: url("../image/movie_btn.png");
+}
+
+.selectbtn{
+    width: 45%;
+    height: 65%;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    font-family: "Karakaze";
+    font-weight: bold;
+    color: white;
+}

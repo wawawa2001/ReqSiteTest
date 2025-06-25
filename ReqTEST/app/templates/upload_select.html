@@ -1,0 +1,30 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Content</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload_select.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="select_container">
+            <div class="select-msg">
+                <span>どちらをアップロードしますか？</span>
+            </div>
+            
+            <div class="selectbtns">
+                <div class="selectbtn videobtn" onclick="location.href='upload/movie'">
+                    <span>Movie</span>
+                </div>
+                <div class="selectbtn illustbtn" onclick="location.href='upload/illust'">
+                    <span>Illust</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<header>
+    <div id="header-container" class="header-container">
+        <div class="header-container-left">
+            <div class="logo-container">
+                <div class="logo"></div><div class="logotxt"></div>
+            </div>
+    
+            <div class="searchbox-container">
+                <div class="searchbox">
+                    <input id="searchTEXT" class="search-input" type="text" placeholder="キーワードで検索" onkeydown="handleEnterKey(event)"><button class="done-search" onclick="search_keyword(document.getElementById('searchTEXT').value)">検索</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="user-menu">
+            <div class="menu message" onclick="location.href='/conversations'">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon"  viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="none" stroke="black"/>
+                  </svg>
+                <span>取引一覧</span>
+            </div>
+            <div class="menu favorite" onclick="location.href='/favorite'">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon"  viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M12 .587l3.668 7.568 8.332 1.206-6.004 5.851 1.417 8.284L12 18.897l-7.413 3.889 1.417-8.284-6.004-5.851 8.332-1.206z" fill="none" stroke="black"/>
+                  </svg>
+                <span>お気に入り</span>
+            </div>
+            <div class="menu cart" onclick="location.href='/cart'">
+                <div id="cart_count"></div>
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M7 4h-2l-1 2h-2v2h1l3 8h12l3-8h1V6h-4.5L16 4H7zm0 2h9l-1.5 4H8.5L7 6zm-1 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" fill="none" stroke="black"/>
+                  </svg>
+                <span>カート</span>
+            </div>
+            <div id="account" class="menu account" onclick="location.href='/account'">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.31 0-10 1.67-10 5v2h20v-2c0-3.33-6.69-5-10-5z" fill="none" stroke="black"/>
+                  </svg>
+                <span>アカウント</span>
+
+                <div id="account-sub-menu" class="account-sub-menu sub-menu">
+                    <div class="history">
+                        <span><a href="/history">購入履歴</a></span>
+                    </div>
+                    <div class="my_contents">
+                        <span><a href="/my_contents">出品商品</a></span>
+                    </div>
+                    <div class="upload_content">
+                        <span><a href="/upload">アップロード</a></span>
+                    </div>
+                    <div class="account-information">
+                        <span><a href="/account">ユーザ表示情報</a></span>
+                    </div>
+                    <div class="account-settings">
+                        <span><a href="/account-settings">会員情報設定</a></span>
+                    </div>
+                    <div class="logout">
+                        <span><a href="/logout">ログアウト</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-header">
+        <div class="categories">
+            <div class="category" id="movies_link" onclick="location.href='/movies'"><span>Movies</span></div>
+            <div class="category" id="illusts_link" onclick="location.href='/illusts'"><span>Illust</span></div>
+        </div>
+    </div>
+    
+</header>
+
+<script>
+    function init_header(){
+        hcontainer_height = document.getElementById("header-container").offsetHeight
+        elems = document.getElementsByClassName("sub-menu")
+
+        notificationLeft = document.getElementById("notification").offsetLeft
+        document.getElementById("notification-sub-menu").style.left = notificationLeft - 160 + "px"
+
+        accountLeft = document.getElementById("account").offsetLeft
+        document.getElementById("account-sub-menu").style.left = accountLeft - 160 + "px"
+    }
+
+    function jumpSearchResult(){
+        text = document.getElementById("searchTEXT").value
+    }
+
+    function handleEnterKey(event) {
+        if (event.key === 'Enter') {
+            search_keyword(document.getElementById('searchTEXT').value)
+        }
+    }
+
+    function navigationWithinCurrentPath(newPath){
+        const currentUrl = window.location.href;
+        const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
+        window.location.href = `${baseUrl}/${newPath}`;
+    }
+
+    function navigationToRootPath(newPath){
+        const rootPath = window.location.origin;
+        window.location.href = `${rootPath}/${newPath}`;
+    }
+
+    function search_keyword(keyword){
+        const locationURL = window.location.toString()
+        if (locationURL.includes("illusts")){
+            location.href = "illusts?search=" + keyword
+        }else if(locationURL.includes("movies")){
+            location.href = "movies?search=" + keyword
+        }
+    }
+    
+    init_header()
+</script>

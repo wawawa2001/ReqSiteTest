@@ -1,0 +1,27 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContentOpener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/front.css') }}">
+</head>
+<body>
+    <div class="content">
+
+        <main>
+            <div class="selector_container">
+                <div class="category first" onclick="location.href='/movies'">
+                    <span>Movie</span>
+                </div>
+                <div class="category second" onclick="location.href='/illust'">
+                    <span>Illust</span>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+
+        </footer>
+    </div>
+</body>
+</html>

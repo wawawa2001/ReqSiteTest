@@ -1,0 +1,118 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/conversation.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="msg_container">
+            <div id="msg_history">
+                
+            </div>
+            <div class="input_msg">
+                <input id="msgtext_input" type="text" onkeydown="">
+                <div class="sendbtn" onclick="sendmsg()">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                            <g id="24-px-Icons" transform="translate(-219.000000, -122.000000)" stroke="#000000">
+                                <g id="ic_send" transform="translate(216.000000, 120.000000)">
+                                    <g id="send">
+                                        <g transform="translate(4.000000, 3.000000)" stroke-width="1">
+                                            <polygon id="Path-32" points="0 0 17 9 0 18 5 9"></polygon>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+<script>
+
+    getmsgs()
+
+    function EnterSend(event){
+        if(event.key === "Enter"){
+            sendmsg()
+        }
+    }
+
+    function clear_data(){
+        document.getElementById("msg_history").innerHTML = ""
+    }
+
+    function set_data(data){
+        clear_data()
+
+        parent = document.getElementById("msg_history")
+        data.forEach(element => {
+            var msg = document.createElement("div")
+            msg.className = "msg"
+
+            if(element["me"]){
+                right_msg = document.createElement("div")
+                right_msg.className = "right_msg"
+            }
+
+            msg.appendChild()
+
+            parent.appendChild(msg)
+        });
+        
+    }
+
+    function getmsgs() {
+        const conversation_id = location.pathname.split("/")[2];
+        fetch(`/get_msgs?conversation_id=${encodeURIComponent(conversation_id)}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+        })
+        .then(data => {
+            set_data(data.messages)
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+
+    function sendmsg(){
+        msg = document.getElementById("msgtext_input").value
+        if(msg != ""){
+            conversation_id = location.pathname.split("/")[2]
+            fetch("/post_msg", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "text": msg,
+                    "conversation_id": conversation_id
+                })
+            })
+            .then(response =>{
+                console.log("Received Message.")
+                document.getElementById("msgtext_input").value = ""
+            })
+        }
+    }
+</script>
+
+</html>

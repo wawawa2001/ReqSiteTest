@@ -1,0 +1,181 @@
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base-item.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common_creator_infopage.js') }}"></script>
+    <title>実績・評価</title>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="intro_menus">
+            <div class="intro_menus_container">
+                <div class="intro_menu">
+                    <span class="intro_menu_title select_menu_title" onclick="location.href=backlocation()">ホーム</span> 
+                    <div class="short_bar_container">
+                        <span class="short_bar"></span>
+                    </div>
+                </div>
+                <div class="intro_menu select_menu">
+                    <span class="intro_menu_title">実績・評価</span> 
+                    <div class="short_bar_container short_bar_container_select">
+                        <span class="short_bar short_bar_select"></span>
+                    </div>
+                </div>
+                <div class="intro_menu">
+                    <span class="intro_menu_title" onclick="location.href=backlocation()+'/services'">出品サービス</span> 
+                    <div class="short_bar_container">
+                        <span class="short_bar"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contents">
+            <div id="userheader" class="userheader" style="background-image: url('{{ url_for('static', filename='image/userheaders/' + data.header_filename) }}');" >
+            </div>
+            
+            <div id="userinfo" class="userinfo">
+                <div class="userinfo_header">
+                    <div class="userinfo_header_left">
+                        <div id="usericon" class="usericon" style="background-image: url('{{ url_for('static', filename='image/usericons/' + data.icon_filename) }}');" ></div>
+                        <div class="username">
+                            <span>{{data.username}}</span>
+                        </div>
+                        <div class="user_reviews">
+                            <div class="user_review">
+                                <span>販売実績<span> {{ "{:,}".format(data.sales_figures) }}</span></span>
+                            </div>
+                            <div class="user_review">
+                                <span>評価 
+                                <svg width="24px" height="24px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <polygon points="50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35" fill="gold" stroke="black" stroke-width="2"/>
+                                </svg>
+                                </span>
+                                <span> {{data.review_rating}}</span>
+                            </div>
+                            <div class="user_review">
+                                <span>フォロワー<span id="follower"> {{data.follower}}</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="userinfo_header_right">
+                        <div id="followbtn" class="communication_btn followbtn" onclick="follow()">
+                            <span id="followbtn_text">フォローする</span>
+                        </div>
+                        <div class="communication_btn consultantbtn" onclick="location.href+='/req_consult'">
+                            <span>見積り・仕事の相談をする</span>
+                        </div>
+                        <div class="communication_btn sendmsgbtn" onclick="location.href+='/dm'">
+                            <span>メッセージを送る</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reviews">
+                    <span class="service_item_list_title">利用者レビュー（{{ reviews|length }}件）</span>
+                    <div class="reviews_container">
+                        {% for review in reviews %}
+                            <div class="review">
+                                <div class="reviewer_icon" style="background-image: url('{{ url_for('static', filename='image/usericons/' + review.reviewer_icon_filename) }}');" ></div>
+                                <div class="review_content">
+                                    <div class="review_header">
+                                        <div class="review_header_left">
+                                            <a href="/movies/{{review.movie_id}}">{{review.title}}</a>
+                                            <div class="star_rating">
+                                                {% for _ in range(review.rating) %}
+                                                    <div class="star">
+                                                        <svg width="auto" height="auto" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                                            <polygon points="50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35" fill="gold" stroke="black" stroke-width="2"/>
+                                                        </svg>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <span>{{review.before}}</span>
+                                    </div>
+                                    <div class="review_comment">
+                                        {{review.comment}}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="service_item_list">
+                    <span class="service_item_list_title">出品サービス（{{ movies|length }}件）</span>
+                    <div class="items">
+                        {% for movie in movies %}
+                            <a href="/movies/{{movie.id}}" class="item-link">
+                                <div class="item">
+
+                                    {% if movie.thum_filename and movie.thum_filename.lower().endswith(('.png', '.jpg', '.jpeg'))%}
+                                        <div class="picturePreview" style="background-image: url('{{ url_for('static', filename='movie/preview/' + movie.thum_filename) }}');">
+
+                                        </div>
+                                    {% else %}
+                                        <div class="videoPreview">
+                                            <video muted loop playsinline onfocus="videofocus(this)">
+                                                <source src="{{ url_for('static', filename='movie/preview/' + movie.thum_filename) }}" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="movie_desc">
+                                        <div class="movie-title-container"><span class="movie-title">{{movie.title}}</span></div>
+                                        <div class="description">{{movie.description}}</div>
+                                    </div>
+                                    <div class="movieinfo">
+                                        {% if (movie.req_price | int) != 0 %}
+                                        <span class="req-price">
+                                            <div class="req_price-design-bar design-bar"></div>
+                                            {{'{:,}'.format(movie.req_price | int)}}円
+                                        </span>
+                                        {% else %}
+                                        
+                                        <span class="price">
+                                            <div class="price-design-bar design-bar"></div>
+                                            {{'{:,}'.format(movie.price | int)}}円
+                                        </span>
+                                        
+                                        {% endif %}
+                                    
+                                        <div class="favorite_btn">
+                                            <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                                <polygon points="50,10 61,35 90,35 65,55 75,80 50,65 25,80 35,55 10,35 39,35" fill="gold" stroke="black" stroke-width="2"/>
+                                            </svg>
+                                        </div>
+                                    
+                                        <div class="c_icon" style="background-image: url('{{ url_for('static', filename='image/usericons/' + movie.usericon) }}');"></div>
+                                        
+                                        <span class="creator_name">{{movie.username}}</span>
+                                    </div>
+
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</body>
+<script>
+    function judge_follow(){
+        is_follow = {{is_follow | tojson}}
+        change_follow_status(is_follow)
+    }
+    
+</script>
+</html>

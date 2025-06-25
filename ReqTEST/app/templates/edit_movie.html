@@ -1,0 +1,120 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Content</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_movie.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="upload_form">
+            <div class="preview_container" style="display: none; margin-bottom: 20px;">
+                <video id="videoPreview" muted controls style="max-width: 100%; max-height: 300px;"></video>
+            </div>
+            <div class="form_container">
+                <form action="" method="post" id="sendform" enctype="multipart/form-data">
+                    <div class="movie_details" id="detailinput">
+                        <div class="opt_item">
+                            <span class="required">必須</span>
+                            <span class="opt_name">サムネイル</span>
+                        
+                            <label for="thum">
+                                <img id="preview" src="{{ url_for('static', filename='movie/preview/' + data.thum_filename) }}" alt="">
+                            </label>
+                        
+                            <input class="opt_input" type="file" id="thum" name="thum" accept="image/png, image/jpeg" style="display: none;">
+                        </div>
+                        <div class="opt_item sampleURLs">
+                            {% for sample_link in data.sample_links %}
+                            <div class="sampleURL">
+                                <span class="optional">任意</span><span class="opt_name">Sample URL</span><input class="opt_input" type="text" id="sample" name="sample" value="{{sample_link}}">
+                            </div>
+                            {% endfor %}
+                            
+                        </div>
+                        
+                        <div class="opt_item">
+                            <span class="required">必須</span><span class="opt_name">タイトル</span><input required class="opt_input" type="text" id="title" name="title" value="{{data.title}}"><br>
+                        </div>
+                        <div class="opt_item">
+                            <span class="required">必須</span>
+                            <span class="opt_name">カテゴリー</span>
+                            <select class="opt_input" required id="tags" name="tags">
+                                <option value="" {{data.category.0}}>選択してください</option>
+                                <option value="全ての動画" {{data.category.1}}>全ての動画</option>
+                                <option value="ショート動画" {{data.category.2}}>ショート動画</option>
+                                <option value="MV動画" {{data.category.3}}>MV動画</option>
+                                <option value="結婚式" {{data.category.4}}>結婚式</option>
+                                <option value="イベント" {{data.category.5}}>イベント</option>
+                                <option value="その他" {{data.category.6}}>その他</option>
+                            </select>
+                        </div>
+                        <div class="opt_item">
+                            <span class="optional">任意</span><span class="opt_name">説明文</span><textarea class="opt_input" type="text" id="description" name="description">{{data.description}}</textarea><br>
+                        </div>
+                        <div class="opt_item">    
+                            <span class="required">必須</span><span class="opt_name">税込</span><input required class="opt_input" type="text" id="price" name="price" value="{{data.price}}">
+                        </div>
+                        <div class="opt_item">    
+                            {% if data.content %}
+                                <span class="optional">任意</span><span class="opt_name">即納コンテンツ</span><input type="checkbox" name="content" id="contents_checkbox" value="1" checked><span>(やり取り無しで購入可)</span>
+                            {% else %}
+                                <span class="optional">任意</span><span class="opt_name">即納コンテンツ</span><input type="checkbox" name="content" id="contents_checkbox" value="1"><span>(やり取り無しで購入可)</span>
+                            {% endif %}
+                        </div>
+                        <div class="opt_item" id="fullmovie_upload" style="display: none;">
+                            <span class="required">必須</span><span class="opt_name">納品データ</span><input class="opt_input" type="file" id="fullmovie" name="full" accept=".mp4,.m4v,.mov,.mpg"><br>
+                        </div>
+                    </div>
+                    <input type="submit" value="送信">
+                </form>
+            </div>
+        </div>
+
+    </main>
+</body>
+<script>
+    const checkbox = document.querySelector('input[type="checkbox"]');
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            contents_on_check();
+        }else{
+            contents_off_check();
+        }
+    });
+
+    function contents_on_check(){
+        document.getElementById("fullmovie_upload").style.display = "flex"
+    }
+
+    function contents_off_check(){
+        document.getElementById("fullmovie_upload").style.display = "none"
+    }
+
+    document.addEventListener("DOMContentLoaded", ()=>{
+        if (document.getElementById("contents_checkbox").checked) {
+            contents_on_check();
+        }else{
+            contents_off_check();
+        }
+    })
+
+    document.getElementById("thum").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("preview").src = e.target.result; // 画像をプレビューに反映
+        };
+        reader.readAsDataURL(file);
+    }
+});
+    
+</script>
+</html>

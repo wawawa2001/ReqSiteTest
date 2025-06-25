@@ -1,0 +1,117 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base-item.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/history.css') }}">
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <title>購入履歴</title>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="content-container">
+            <span style="font-size: 28px;">購入履歴</span>
+            <div class="list-container">
+                <div class="items">
+                    {% for movie in history %}
+                        <div class="item_container">
+                            <a href="/movies/{{movie.id}}" class="item-link">
+                                <div class="item">
+    
+                                    {% if movie.thum_filename and movie.thum_filename.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))%}
+                                        <div class="picturePreview" style="background-image: url('{{ url_for('static', filename='movie/preview/' + movie.thum_filename) }}');">
+    
+                                        </div>
+                                    {% else %}
+                                        <div class="videoPreview">
+                                            <video muted loop playsinline onfocus="videofocus(this)">
+                                                <source src="{{ url_for('static', filename='movie/preview/' + movie.thum_filename) }}" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    {% endif %}
+    
+                                    <div class="movie_desc">
+                                        <div class="movie-title-container"><span class="movie-title">{{movie.title}}</span></div>
+                                    </div>
+                                    <div class="movieinfo">
+
+                                        {% if (movie.req_price | int) != 0 %}
+                                        <span class="req-price">
+                                            <div class="req_price-design-bar design-bar"></div>
+                                            {{'{:,}'.format(movie.req_price | int)}}円
+                                        </span>
+                                        {% else %}
+                                        
+                                        <span class="price">
+                                            <div class="price-design-bar design-bar"></div>
+                                            {{'{:,}'.format(movie.price | int)}}円
+                                        </span>
+                                        
+                                        {% endif %}
+                                    
+                                        <div class="c_icon" style="background-image: url('{{ url_for('static', filename='image/usericons/' + movie.usericon) }}');"></div>
+                                        
+                                        <span class="creator_name">{{movie.username}}</span>
+                                    </div>
+    
+                                </div>
+                            </a>
+
+
+                            {% if movie.reqflg == 1 %}
+                            <div class="right-container">
+                                <div class="description">
+                                    <span>【商品説明】</span><br>
+                                    <span>{{movie.description}}</span>
+                                </div>
+                                <div class="btn-method" onclick="window.location.href='conversation/{{movie.conversation}}'">
+                                    <span>クリエイターとのやり取りをする</span>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="right-container">
+                                <div class="description">
+                                    <span>【商品説明】</span><br>
+                                    <span>{{movie.description}}</span>
+                                </div>
+                                <div class="btn-method" onclick="download({{movie.id}})">
+                                    <span>動画をダウンロードする</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+<script>
+
+    function download(id) {
+        
+        fetch(window.location.toString()+"/download?id=" + id)
+            .then(response => {
+                const filename = response.headers.get('Content-Disposition').split('filename=')[1].replace(/['"]/g, '');
+                return Promise.all([response.blob(), filename]);
+            })
+            .then(([blob, filename]) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            })
+            .catch(error => console.error('Download failed:', error));
+    }
+</script>
+</html>

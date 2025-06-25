@@ -1,0 +1,214 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Setting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="content_container">
+            <div class="infomations">
+                
+                <form action="account" method="post" enctype="multipart/form-data">
+                    <label for="account-header" id="account-header-label" 
+                        style="background-image: url('{{ url_for('static', filename='image/userheaders/' + header_filename) }}');" 
+                        class="account-header">
+                    </label>
+                    <input id="account-header" name="account-header" style="display: none;" type="file" onchange="openCroppieModal(this)">
+                    <div id="croppie-modal" style="display: none;">
+                        <div id="croppie-container"></div>
+                        <div id="croppie-controls">
+                            <button type="button" id="crop-image">トリミング</button>
+                            <button type="button" id="cancel-croppie">キャンセル</button>
+                        </div>
+                    </div>
+
+                    <label for="icon" id="icon-label" style="background-image: url('{{ url_for('static', filename='image/usericons/' + icon_filename) }}');" class="account-icon" enctype="multipart/form-data"></label>
+                    <input id="icon" name="icon" style="display: none;" type="file" onchange="change_icon()">
+        
+                    <div class="account-info msg_onBOX">
+                        <div class="account-info-container">
+                            <span class="required">必須</span>
+                            <span class="account-info-tag">ユーザ名：</span>
+                            <input type="text" name="username" value="{{userdata[0]}}" required><br>
+                        </div>
+                        {% if umsg %}
+                            <span style="color: red;">{{umsg}}</span>
+                        {% endif %} 
+                    </div>
+
+                    <div class="account-info msg_onBOX">
+                        <div class="account-info-container">
+                            <span class="required">必須</span>
+                            <span class="account-info-tag">メールアドレス：</span>
+                            <input type="text" name="email" value="{{userdata[1]}}" required><br>
+                        </div>
+                        {% if mmsg %}
+                            <span style="color: red;">{{mmsg}}</span>
+                        {% endif %} 
+                    </div>
+
+                    <div class="account-info">
+                        <span class="optional">任意</span>
+                        <span class="account-info-tag">外部リンク</span>
+                        <div class="snslinks">
+                            <div class="snslink">
+                                <span>Youtube</span>
+                                {% if userintro.youtube %}
+                                <input name="youtube_link" class="sns_url" type="text" placeholder="URL" value="https://youtube.com/{{userintro.youtube}}">
+                                {% else %}
+                                <input name="youtube_link" class="sns_url" type="text" placeholder="URL" value="">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="account-info">
+                        <span class="optional">任意</span>
+                        <span class="account-info-tag">自己紹介文：</span>
+                        {% if userintro.intro_text %}
+                        <textarea class="self_intro" name="self_intro" placeholder="自己紹介文">{{userintro.intro_text}}</textarea>
+                        {% else %}
+                        <textarea class="self_intro" name="self_intro" placeholder="自己紹介文"></textarea>
+                        {% endif %}
+                    </div>
+
+                    <div class="account-info">
+                        <span class="optional">任意</span>
+                        <span class="account-info-tag">銀行口座</span>
+                        <details class="bank-info">
+                            <summary>詳細を表示する</summary>
+                            <div class="bank-info-item">
+                                <span class="required">必須</span>
+                                <span style="width: 40%; font-size: 12px;">金融機関コード</span>
+                                <input style="width: 200px;" type="text" name="bank_code" id="" value="{{bankaccount.bank_code}}">
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="required">必須</span>
+                                <span style="width: 40%; font-size: 12px;">金融機関名</span>
+                                <input style="width: 200px;" type="text" name="bank_name" id="" value="{{bankaccount.bank_name}}">
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="required">必須</span>
+                                <span style="width: 40%; font-size: 12px;">支店コード</span>
+                                <input style="width: 200px;" type="text" name="branch_code" id="" value="{{bankaccount.branch_code}}">
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="required">必須</span>
+                                <span style="width: 40%; font-size: 12px;">支店名</span>
+                                <input style="width: 200px;" type="text" name="branch_name" id="" value="{{bankaccount.branch_name}}">
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="required">必須</span>
+                                <span style="width: 40%; font-size: 12px;">口座番号</span>
+                                <input style="width: 200px;" type="text" name="account_number" id="" value="{{bankaccount.account_number}}">
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="required">必須</span>
+                                <span style="width: 40%; font-size: 12px;">預金種類</span>
+                                <input style="width: 200px;" type="text" name="deposit_type" id="" value="{{bankaccount.deposit_type}}">
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="required">必須</span>
+                                <span style="width: 40%; font-size: 12px;">口座名義</span>
+                                <input style="width: 200px;" type="text" name="account_holder" id="" value="{{bankaccount.account_holder}}">
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="required">必須</span>
+                                <span style="width: 40%; font-size: 12px;">口座名義カナ</span>
+                                <input placeholder="" style="width: 200px;" type="text" name="account_holder_kana" id="" value="{{bankaccount.account_holder_kana}}">
+                            </div>
+                        </details>
+                    </div>
+                    
+                    <input type="submit" value="送信">
+                </form>
+                
+
+            </div>
+        </div>
+    </main>
+</body>
+<script>
+    function change_icon(){
+        fileurl = URL.createObjectURL(document.getElementById("icon").files[0])
+        document.getElementById("icon-label").style.backgroundImage = `url(${fileurl})`
+    }
+
+    let croppieInstance;
+
+    function openCroppieModal(input) {
+        const croppieModal = document.getElementById('croppie-modal');
+        const croppieContainer = document.getElementById('croppie-container');
+        const accountHeaderLabel = document.getElementById('account-header-label');
+
+        const file = input.files[0];
+        if (file) {
+            
+            const FileSize = file.size / (1024 * 1024);
+
+            if (FileSize > 0.5){
+                alert("0.5MB未満の画像を選択してください。")
+                cancel_croppie();
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const viewportWidth = window.innerWidth * 0.8;
+                const viewportHeight = window.innerHeight * 0.4;
+                // Croppieインスタンスの初期化
+                croppieInstance = new Croppie(croppieContainer, {
+                    viewport: { width: viewportWidth, height: viewportHeight },
+                    boundary: { width: viewportWidth, height: viewportHeight * 1.3 },
+                    showZoomer: true
+                });
+                croppieInstance.bind({ url: e.target.result });
+                croppieModal.style.display = 'flex'; // モーダルを表示
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // トリミングボタンのイベントリスナー
+        document.getElementById('crop-image').onclick = () => {
+            croppieInstance.result({ type: 'base64', size: 'viewport' }).then((croppedImage) => {
+
+                // トリミングされた画像を background-image として設定
+                document.getElementById('account-header-label').style.backgroundImage = `url(${croppedImage})`;
+
+                // トリミング後の画像をフォームに送信する準備
+                const accountHeaderInput = document.getElementById('account-header');
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'cropped-image';
+                hiddenInput.value = croppedImage;  // base64データを設定
+                accountHeaderInput.parentNode.appendChild(hiddenInput);
+
+                // モーダルを非表示にし、Croppieインスタンスを破棄
+                croppieModal.style.display = 'none';
+                croppieInstance.destroy();
+
+                var fileInput = document.getElementById('account-header');
+                fileInput.value = '';
+            });
+        };
+
+        // キャンセルボタンのイベントリスナー
+        document.getElementById('cancel-croppie').onclick = () => {
+            cancel_croppie();
+        };
+
+        function cancel_croppie(){
+            croppieModal.style.display = 'none';
+            croppieInstance.destroy();
+        }
+    }
+
+</script>
+</html>

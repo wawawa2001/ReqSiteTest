@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>決済結果</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .system-msg {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .ok {
+            color: #28a745;
+        }
+        .ng {
+            color: #dc3545;
+        }
+        .redirect-msg {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+        .loading {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="system-msg">
+            <div class="message {{ 'ok' if msg == 'OK' else 'ng' }}">{{msg}}</div>
+            <div class="loading"></div>
+            <div class="redirect-msg">5秒後にページが切り替わります。</div>
+        </div>
+    </main>
+
+    <script>
+        window.addEventListener("load", function(){
+            setTimeout(() => {
+                window.location.href = "/history"
+            }, 5000)
+        })
+    </script>
+</body>
+</html>

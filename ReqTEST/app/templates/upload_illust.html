@@ -1,0 +1,233 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Content</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <main>
+        <div class="upload_form">
+            <div class="preview_container" style="display: none; margin-bottom: 20px;">
+                <video id="videoPreview" muted controls style="max-width: 100%; max-height: 300px;"></video>
+            </div>
+            <div class="form_container">
+                <form action="upload" method="post" id="sendform" enctype="multipart/form-data">
+                    <label for="upload_file" class="custom_upload" id="custom_upload">
+                        <div class="upload_icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                              </svg>
+                        </div>
+                        ファイルを選択
+                    </label>
+                    <input style="display: none;" id="upload_file" type="file" name="file" onchange="uploaded()">
+                    <span class="upload_description">アップロードボタンを押してコンテンツをアップロードしてください。</span>
+                    <span class="upload_description">以下の形式に対応しています。</span>
+                    <span class="upload_description">*.mp4, *.webm, *.mpeg</span>
+
+
+                    <div class="movie_details" id="detailinput" style="display: none;">
+                        <div class="opt_item">
+                            <span class="required">必須</span><span class="opt_name">タイトル</span><input class="opt_input" type="text" id="title" name="title"><br>
+                        </div>
+                        <div class="opt_item">
+                            <span class="required">必須</span>
+                            <span class="opt_name">カテゴリー</span>
+                            <select class="opt_input"  id="tags" name="tags">
+                                <option value="">選択してください</option>
+                                <option value="全ての動画">全ての動画</option>
+                                <option value="ショート動画">ショート動画</option>
+                                <option value="MV動画">MV動画</option>
+                                <option value="結婚式">結婚式</option>
+                                <option value="イベント">イベント</option>
+                                <option value="その他">その他</option>
+                                <!-- 必要に応じて他のカテゴリーを追加 -->
+                            </select>
+                        </div>
+                        <div class="opt_item">
+                            <span class="optional">任意</span><span class="opt_name">説明文</span><textarea class="opt_input" type="text" id="description" name="description"></textarea><br>
+                        </div>
+                        <div class="opt_item">    
+                            <span class="required">必須</span><span class="opt_name">税込</span><input class="opt_input" type="text" id="price" name="price">
+                        </div>
+                    </div>
+                </form>
+                <button id="uploadbtn">アップロード</button>
+            </div>
+        </div>
+
+    </main>
+</body>
+<script>
+
+    const { createFFmpeg, fetchFile } = window.FFmpeg || {};
+
+    if (!createFFmpeg || !fetchFile) {
+        console.error('FFmpeg is not loaded correctly');
+        alert('FFmpegの読み込みに失敗しました。ページをリロードしてください。');
+    } else {
+        const ffmpeg = createFFmpeg({ 
+            log: true,
+            progress: ({ ratio }) => {
+                const progressElement = document.getElementById('progress');
+                progressElement.value = ratio * 100;
+            },
+            corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
+        });
+        let ffmpegLoaded = false;
+
+        let inputFile = null;
+
+        
+
+        async function ensureFFmpegLoaded() {
+            if (!ffmpegLoaded) {
+                await ffmpeg.load();
+                ffmpegLoaded = true;
+            }
+        }
+
+        async function processVideo() {
+            const videoFile = document.getElementById('upload_file').files[0];
+            if (!videoFile) {
+                alert("動画ファイルを選択してください");
+                return;
+            }
+
+            const start = parseInt(
+                parseInt(document.getElementById('start-time').value.split(":")[0]) * 60 + 
+                parseInt(document.getElementById('start-time').value.split(":")[1])
+            );
+            const end = parseInt(
+                parseInt(document.getElementById('end-time').value.split(":")[0]) * 60 + 
+                parseInt(document.getElementById('end-time').value.split(":")[1])
+            );
+
+            console.log(start, end)
+            const width = 640;
+            const height = 360;
+
+            try {
+                await ensureFFmpegLoaded();
+                fileInput = document.getElementById("upload_file");
+                inputFile = fileInput.files[0];
+                ffmpeg.FS('writeFile', inputFile.name, await fetchFile(inputFile));
+
+                await ffmpeg.run(
+                    '-i', inputFile.name,
+                    '-ss', start.toString(),
+                    '-to', end.toString(),
+                    '-vf', `scale=${width}:${height}`,
+                    '-an',
+                    '-c:v', 'libx264',
+                    '-preset', 'ultrafast',
+                    '-crf', '23',
+                    '-threads', '0',
+                    'output.mp4'
+                );
+
+                const data = ffmpeg.FS('readFile', 'output.mp4');
+                const blob = new Blob([data.buffer], { type: 'video/mp4' });
+                displayResult(blob);
+
+                // 処理後の動画をFormDataに追加
+                const processedFile = new File([blob], 'processed_' + inputFile.name, { type: 'video/mp4' });
+                
+                // 新しいFormDataオブジェクトを作成
+                const formData = new FormData();
+                
+                // オリジナルの動画を追加
+                formData.append('original_file', inputFile, inputFile.name);
+                
+                // 処理後の動画を追加
+                formData.append('processed_file', processedFile, processedFile.name);
+                
+                // その他のフォームデータを追加
+                formData.append('start-time', document.getElementById('start-time').value);
+                formData.append('end-time', document.getElementById('end-time').value);
+                
+                formData.append('title', document.getElementById('title').value);
+                formData.append('songname', document.getElementById('songname').value);
+                formData.append('tags', document.getElementById('tags').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('price', document.getElementById('price').value);
+
+                // フォームを非同期で送信
+                const response = await fetch('upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('アップロードが完了しました');
+                } else {
+                    alert('アップロードに失敗しました');
+                }
+
+            } catch (error) {
+                console.error('処理エラー:', error);
+                alert('動画処理中にエラーが発生しました');
+            }
+        }
+
+        document.getElementById('uploadbtn').addEventListener('click', async (e) => {
+            e.preventDefault(); // デフォルトのフォーム送信を防止
+            await processVideo();
+        });
+
+        // フォームのデフォルト送信を防止
+        document.getElementById('sendform').addEventListener('submit', (e) => {
+            e.preventDefault();
+        });
+        
+        function displayResult(blob) {
+            const videoElement = document.getElementById('videoPreview');
+            videoElement.src = URL.createObjectURL(blob);
+        }
+    }
+
+    function uploaded(){
+        let formContainer = document.getElementsByClassName("form_container")[0];
+        let upload_description = formContainer.querySelectorAll(".upload_description");
+        for(var i=0; i<upload_description.length; i++){
+            upload_description[i].style.display = "none"
+        }
+        uploadbtn = document.getElementById("custom_upload")
+        //uploadbtn.style.justifyContent = "center"
+        //uploadbtn.textContent = "アップロード済"
+        uploadbtn.style.display = "none"
+
+        document.getElementById("uploadbtn").style.display = "block"
+        document.getElementById("detailinput").style.display = "flex"
+
+        btns = document.getElementsByClassName("timeset-btn")
+
+        for(var i=0; i<btns.length; i++){
+            btns[i].style.display = "flex"
+        }
+
+        let fileInput = document.getElementById("upload_file");
+        let file = fileInput.files[0];
+        
+        if (file) {
+            let videoPreview = document.getElementById("videoPreview");
+            let previewContainer = document.querySelector(".preview_container");
+            
+            let videoURL = URL.createObjectURL(file);
+            videoPreview.src = videoURL;
+            previewContainer.style.display = "flex";
+            console.log('選択されたファイル:', file.name);
+        }
+    }
+
+    
+</script>
+</html>
